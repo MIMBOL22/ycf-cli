@@ -76,9 +76,9 @@ AWS_SECRET_ACCESS_KEY=
  + deploy
  + + Пример:
    + ```bash
-     ycf-clid deploy
+     ycf-cli deploy
      ```
  + + Пример c указанием окружения:
    + ```bash
-     ycf-clid deploy --env dev
+     ycf-cli deploy --env dev
      ```
