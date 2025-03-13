@@ -1,6 +1,6 @@
  # YCF-CLI
  ## CLI для работы с cервисом Yandex Cloud Functions
-На данный момент поддерживается только деплой функций
+На данный момент поддерживается только деплой функций и только для **JS/TS функций**
 
 Пример проекта можно увидеть [здесь](https://github.com/MIMBOL22/ycf-cli-template/)
 Скачать CLI можно [тут](https://github.com/MIMBOL22/ycf-cli/releases)
