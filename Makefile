@@ -1,4 +1,4 @@
-PROGRAM_NAME = ycf-cli
+PROGRAM_NAME = ysd-cli
 
 COMMIT=$(shell git rev-parse --short HEAD)
 BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
@@ -24,3 +24,6 @@ build: dep ## Build pgcenter executable.
 clean: ## Clean build directory.
 	rm -f ./bin/${PROGRAM_NAME}
 	rmdir ./bin
+
+devbuild:
+	go build -o ./../ysd-cli

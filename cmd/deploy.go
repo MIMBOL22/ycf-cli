@@ -1,18 +1,20 @@
 package cmd
 
 import (
-	"github.com/spf13/cobra"
+	"context"
+	"github.com/urfave/cli/v3"
 	"github.com/yandex-cloud/go-genproto/yandex/cloud/serverless/functions/v1"
 	"log"
 	"os"
 	"sync"
-	"ycf-cli/function"
+	"ysd-cli/integration"
 )
 
-var deployCmd = &cobra.Command{
-	Use:   "deploy",
-	Short: "Deploy functions to YCloud",
-	Run: func(cmd *cobra.Command, args []string) {
+var deployCmd = &cli.Command{
+	Name:    "deploy",
+	Usage:   "deploy",
+	Aliases: []string{"d"},
+	Action: func(ctx context.Context, cmd *cli.Command) error {
 
 		if len(Functions) == 0 {
 			log.Println("Функции для деплоя не найдены")
@@ -23,7 +25,7 @@ var deployCmd = &cobra.Command{
 		var wg sync.WaitGroup
 		for _, f := range Functions {
 			wg.Add(1)
-			go func(f function.Function) {
+			go func(f integration.Function) {
 				defer wg.Done()
 
 				f.Build()
@@ -35,7 +37,7 @@ var deployCmd = &cobra.Command{
 		// Загрузка в S3
 		for i, _ := range Functions {
 			wg.Add(1)
-			go func(f *function.Function) {
+			go func(f *integration.Function) {
 				defer wg.Done()
 				f.Upload2S3()
 			}(&Functions[i])
@@ -45,7 +47,7 @@ var deployCmd = &cobra.Command{
 		// Загрузка в облако
 		for i, _ := range Functions {
 			wg.Add(1)
-			go func(f *function.Function) {
+			go func(f *integration.Function) {
 				defer wg.Done()
 
 				YC.CreateVersion(f)
@@ -56,7 +58,7 @@ var deployCmd = &cobra.Command{
 		// Удаление прошлых версий
 		for i, _ := range Functions {
 			wg.Add(1)
-			go func(f *function.Function) {
+			go func(f *integration.Function) {
 				defer wg.Done()
 
 				versions := YC.GetVersions(f.Config.Id, `status="ACTIVE"`)
@@ -75,5 +77,6 @@ var deployCmd = &cobra.Command{
 		wg.Wait()
 
 		log.Println("Успешный деплой всех функций!")
+		return nil
 	},
 }

@@ -1,9 +1,8 @@
-package internal
+package utils
 
 import (
 	"archive/zip"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,9 +11,7 @@ import (
 func Zip(inDir, outZip string) error {
 	file, err := os.Create(outZip)
 	if err != nil {
-		log.Println("Ошибка создания файла архива", outZip, ":")
-		log.Println(err)
-		os.Exit(1)
+		return err
 	}
 	defer file.Close()
 

@@ -4,34 +4,36 @@ import (
 	"encoding/json"
 	ycsdk "github.com/yandex-cloud/go-sdk"
 	"github.com/yandex-cloud/go-sdk/iamkey"
-	"log"
 	"os"
 )
 
 // TODO: Протестировать
-func (y *YaClAPI) InstanceAuth() {
-	y.Init(ycsdk.InstanceServiceAccount())
+func NewInstanceCreds() (ycsdk.Credentials, error) {
+	return ycsdk.InstanceServiceAccount(), nil
 }
 
-func (y *YaClAPI) ServiceAuth(keyFilePath string) {
+func NewServiceAccountCreds(keyFilePath string) (ycsdk.Credentials, error) {
 	keyFile, err := os.ReadFile(keyFilePath)
 	if err != nil {
-		log.Fatalf("Ошибка при чтении файла ключа: %v", err)
+		//log.Fatalf("Ошибка при чтении файла ключа: %v", err)
+		return nil, err
 	}
 
 	var key *iamkey.Key
 	if err := json.Unmarshal(keyFile, &key); err != nil {
-		log.Fatalf("Ошибка при обработке JSON ключа: %v", err)
+		//log.Fatalf("Ошибка при обработке JSON ключа: %v", err)
+		return nil, err
 	}
 
 	credentials, err := ycsdk.ServiceAccountKey(key)
 	if err != nil {
-		log.Fatalf("Ошибка авторизации через ServiceAccount: %v", err)
+		//log.Fatalf("Ошибка авторизации через ServiceAccount: %v", err)
+		return nil, err
 	}
 
-	y.Init(credentials)
+	return credentials, nil
 }
 
-func (y *YaClAPI) OAuthAuth(oAuthToken string) {
-	y.Init(ycsdk.OAuthToken(oAuthToken))
+func NewOAuthCreds(oAuthToken string) (ycsdk.Credentials, error) {
+	return ycsdk.OAuthToken(oAuthToken), nil
 }

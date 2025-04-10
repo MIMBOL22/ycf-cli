@@ -1,13 +1,13 @@
-package internal
+package utils
 
 import (
 	"context"
+	"errors"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"io"
-	"log"
 	"os"
 )
 
@@ -17,11 +17,11 @@ const YaclS3Endpoint = "https://storage.yandexcloud.net/"
 func Upload2S3(bucket string, key string, file io.Reader) (*manager.UploadOutput, error) {
 	accessKey, exist := os.LookupEnv("AWS_ACCESS_KEY_ID")
 	if !exist {
-		log.Fatalln("Ошибка загрузки в S3: AWS_ACCESS_KEY_ID нет в ENV")
+		return nil, errors.New("Ошибка загрузки в S3: AWS_ACCESS_KEY_ID нет в ENV")
 	}
 	secretKey, exist := os.LookupEnv("AWS_SECRET_ACCESS_KEY")
 	if !exist {
-		log.Fatalln("Ошибка загрузки в S3: AWS_SECRET_ACCESS_KEY нет в ENV")
+		return nil, errors.New("Ошибка загрузки в S3: AWS_SECRET_ACCESS_KEY нет в ENV")
 	}
 
 	cfg := aws.Config{

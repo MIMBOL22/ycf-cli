@@ -1,13 +1,13 @@
- # YCF-CLI
- ## CLI для работы с cервисом Yandex Cloud Functions
+ # YSD-CLI
+ ## CLI для Деплоя сервисов группы Yandex Cloud Serverless (Yandex Serverless Deploy)
 На данный момент поддерживается только деплой функций и только для **JS/TS функций**
 
-Пример проекта можно увидеть [здесь](https://github.com/MIMBOL22/ycf-cli-template/)
-Скачать CLI можно [тут](https://github.com/MIMBOL22/ycf-cli/releases)
+Пример проекта можно увидеть [здесь](https://github.com/MIMBOL22/ysd-cli-template/)
+Скачать CLI можно [тут](https://github.com/MIMBOL22/ysd-cli/releases)
 
  ## Настройка проекта
  ### Главный конфиг
-Для начала, вам необходимо создать в корне своего проекта главный конфиг с названием mono.ycf.yaml :
+Для начала, вам необходимо создать в корне своего проекта главный конфиг с названием mono.ysd.yaml :
 ```yaml
 base_dir: ./functions
 service_account_key_path: ./authorized_key.json
@@ -31,7 +31,7 @@ AWS_SECRET_ACCESS_KEY=
  + AWS_SECRET_ACCESS_KEY - Секрет статичного ключа сервисного аккаунта (используется для S3)
    
  ### Конфиги функции
- Теперь необходимо в каждой папке функции (напомню, каждая из этих папок должна находиться в указанном base_dir) c названием ycf.yaml:
+ Теперь необходимо в каждой папке функции (напомню, каждая из этих папок должна находиться в указанном base_dir) c названием ysd.yaml:
  ```yaml
  environments:
   - name: production
@@ -76,9 +76,9 @@ AWS_SECRET_ACCESS_KEY=
  + deploy
  + + Пример:
    + ```bash
-     ycf-cli deploy
+     ysd-cli deploy
      ```
  + + Пример c указанием окружения:
    + ```bash
-     ycf-cli deploy --env dev
+     ysd-cli deploy --env dev
      ```

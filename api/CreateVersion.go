@@ -4,31 +4,42 @@ import (
 	"github.com/yandex-cloud/go-genproto/yandex/cloud/serverless/functions/v1"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"log"
-	"os"
-	ycfunc "ycf-cli/function"
-	"ycf-cli/internal"
+	"ysd-cli/utils"
 )
 
-func (y *YaClAPI) CreateVersion(fun *ycfunc.Function) {
-	log.Println("Загрузка функции", fun.PathName, "в облако")
+type CreateVersionData struct {
+	id               string
+	runtime          string
+	description      string
+	entrypoint       string
+	memory           int64
+	timeout          int64
+	serviceAccountId string
+	s3Package        *functions.Package
+	fileName         string
+	functionCodeName string
+	pathName         string
+}
 
-	fConfig := fun.Config
-	entrypoint := internal.GetFilename(fConfig.Entrypoint.File) + "." + fConfig.Entrypoint.Function
+func (y *YaClAPI) CreateVersion(data *CreateVersionData) error {
+	log.Println("Загрузка функции", data.pathName, "в облако")
+
+	entrypoint := utils.GetFilename(data.fileName) + "." + data.functionCodeName
 
 	_, err := y.Sdk.Serverless().Functions().Function().CreateVersion(y.Ctx, &functions.CreateFunctionVersionRequest{
-		FunctionId:  fConfig.Id,
-		Runtime:     fConfig.Runtime,
-		Description: fConfig.Description,
+		FunctionId:  data.id,
+		Runtime:     data.runtime,
+		Description: data.description,
 		Entrypoint:  entrypoint,
 		Resources: &functions.Resources{
-			Memory: fConfig.Memory * 1024 * 1024,
+			Memory: data.memory * 1024 * 1024,
 		},
 		ExecutionTimeout: &durationpb.Duration{
-			Seconds: fConfig.Timeout,
+			Seconds: data.timeout,
 		},
-		ServiceAccountId: fConfig.ServiceAccountId,
+		ServiceAccountId: data.serviceAccountId,
 		PackageSource: &functions.CreateFunctionVersionRequest_Package{
-			Package: fun.S3Package,
+			Package: data.s3Package,
 		},
 		Environment:   nil,
 		Connectivity:  nil,
@@ -37,9 +48,5 @@ func (y *YaClAPI) CreateVersion(fun *ycfunc.Function) {
 		StorageMounts: nil,
 		Mounts:        nil,
 	})
-	if err != nil {
-		log.Println("Ошибка загрузки функции", fun.PathName, "в облако:")
-		log.Println(err)
-		os.Exit(1)
-	}
+	return err
 }
